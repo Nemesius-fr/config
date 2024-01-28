@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Couleurs
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m' # Pas de couleur
+
+# En-tête
+echo -e "${BLUE}********************************************************************************${NC}"
+echo -e "${BLUE}* Bienvenue sur $(lsb_release -d -s) ($(uname -r) $(uname -m)) *${NC}"
+echo -e "${BLUE}********************************************************************************${NC}"
+
+# Informations système
+echo -e "${GREEN}Information système en date du $(date)${NC}\n"
+
+# Charge du système
+system_load=$(uptime | awk -F'load average:' '{ print $2 }' | sed 's/ //g')
+echo -e "${GREEN}Charge système :${NC} $system_load"
+
+# Nombre de processus
+process_count=$(ps -e | wc -l)
+echo -e "${GREEN}Processus en cours :${NC} $process_count"
+
+# Utilisation du disque /
+usage_of_root=$(df -h / | awk 'NR==2{print $5 " de " $2}')
+echo -e "${GREEN}Utilisation de / :${NC} $usage_of_root"
+
+# Nombre d'utilisateurs connectés
+users_logged_in=$(who | wc -l)
+echo -e "${GREEN}Utilisateurs connectés :${NC} $users_logged_in"
+
+# Utilisation de la mémoire
+total_memory=$(free -m | awk 'NR==2{print $2}')
+used_memory=$(free -m | awk 'NR==2{print $3}')
+if [ "$total_memory" -gt 0 ]; then
+    memory_usage=$(awk "BEGIN {print ($used_memory/$total_memory)*100}")
+    echo -e "${GREEN}Utilisation de la mémoire :${NC} ${memory_usage}%"
+else
+    echo -e "${GREEN}Utilisation de la mémoire :${NC} Non disponible"
+fi
+
+# Utilisation du swap
+total_swap=$(free -m | awk 'NR==3{print $2}')
+used_swap=$(free -m | awk 'NR==3{print $3}')
+if [ "$total_swap" -gt 0 ]; then
+    swap_usage=$(awk "BEGIN {print ($used_swap/$total_swap)*100}")
+    echo -e "${GREEN}Utilisation du swap :${NC} ${swap_usage}%"
+else
+    echo -e "${GREEN}Utilisation du swap :${NC} Non disponible"
+fi
+
+# Adresse IP pour eth0 (ajuster selon votre interface réseau)
+ip_address=$(ip addr show eth0 | awk '$1 == "inet" {print $2}' | cut -d/ -f1)
+echo -e "${GREEN}Adresse IPv4 pour eth0 :${NC} $ip_address"
