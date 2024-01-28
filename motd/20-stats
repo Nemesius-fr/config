@@ -52,3 +52,4 @@ fi
 # Adresse IP pour eth0 (ajuster selon votre interface réseau)
 ip_address=$(ip addr show eth0 | awk '$1 == "inet" {print $2}' | cut -d/ -f1)
 echo -e "${GREEN}Adresse IPv4 pour eth0 :${NC} $ip_address"
+echo -e "${BLUE}********************************************************************************${NC}"
